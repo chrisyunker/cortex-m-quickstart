@@ -7,18 +7,32 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "cortex-debug",
+            "type": "probe-rs-debug",
+            "preLaunchTask": "${defaultBuildTask}",
             "request": "launch",
-            "name": "Debug (QEMU)",
-            "servertype": "qemu",
-            "cwd": "${workspaceRoot}",
-            "preLaunchTask": "Cargo Build (debug)",
-            "runToEntryPoint": "main",
-            "executable": "./target/thumbv7m-none-eabi/debug/{{project-name}}",
-            /* Run `cargo build --example hello` and uncomment this line to run semi-hosting example */
-            //"executable": "./target/thumbv7m-none-eabi/debug/examples/hello",
-            "cpu": "cortex-m3",
-            "machine": "lm3s6965evb",
+            "name": "Debug (Probe-RS)",
+            "flashingConfig": {
+              "flashingEnabled": true,
+            },
+            "chip": "STM32F303VCT6",
+            "coreConfigs": [
+              {
+                "coreIndex": 0,
+                "rttEnabled": true,
+                "rttChannelFormats": [
+                    {
+                        "channelNumber": 0,
+                        "dataFormat": "String",
+                        "showTimestamps": true
+                    },
+                    {
+                        "channelNumber": 1,
+                        "dataFormat": "BinaryLE"                    
+                    }
+                ],
+                "programBinary": "./target/thumbv7em-none-eabi/debug/examples/itm"
+              }
+            ]
         },
         {
             /* Configuration for the STM32F303 Discovery board */
@@ -47,6 +61,20 @@
                     { "type": "console", "label": "ITM", "port": 0 }
                 ]
             }
+        },
+        {
+            "type": "cortex-debug",
+            "request": "launch",
+            "name": "Debug (QEMU)",
+            "servertype": "qemu",
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": "Cargo Build (debug)",
+            "runToEntryPoint": "main",
+            "executable": "./target/thumbv7m-none-eabi/debug/{{project-name}}",
+            /* Run `cargo build --example hello` and uncomment this line to run semi-hosting example */
+            //"executable": "./target/thumbv7m-none-eabi/debug/examples/hello",
+            "cpu": "cortex-m3",
+            "machine": "lm3s6965evb",
         }
     ]
 }
